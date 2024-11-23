@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center text-white d-flex align-items-center" style="background: url('{% static "images/dashboard_image.jpeg" %}') no-repeat center center/cover; height: 80vh;">
+    <div class="container">
+        <h1 class="display-4">Welcome to Relax Housing</h1>
+        <p class="lead">Find and post accommodations effortlessly. Your perfect home is just a click away!</p>
+        <div class="mt-4">
+            <a href="{% url 'signup' %}" class="btn btn-primary btn-lg me-3">Sign Up</a>
+            <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">Login</a>
+        </div>
+    </div>
+</div>
+
+<!-- About Section -->
+<div class="container my-5">
+    <h2 class="text-center mb-4">Why Choose Us?</h2>
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <i class="fas fa-search-location fa-3x text-primary"></i>
+            <h4 class="mt-3">Find Your Space</h4>
+            <p>Search for accommodations based on location, budget, and preferences with our easy-to-use filters.</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="fas fa-user-friends fa-3x text-primary"></i>
+            <h4 class="mt-3">Meet Your Roommates</h4>
+            <p>Connect with like-minded individuals and find roommates that suit your lifestyle.</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="fas fa-hand-holding-usd fa-3x text-primary"></i>
+            <h4 class="mt-3">Affordable Options</h4>
+            <p>Browse affordable rooms, apartments, and shared spaces within your budget.</p>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="container my-5">
+    <h2 class="text-center mb-4">How It Works</h2>
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="p-4 shadow-sm rounded">
+                <h3>Step 1</h3>
+                <p>Create your account and explore available accommodations.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-4 shadow-sm rounded">
+                <h3>Step 2</h3>
+                <p>Use filters to find a space that fits your preferences and budget.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-4 shadow-sm rounded">
+                <h3>Step 3</h3>
+                <p>Contact landlords or roommates to finalize your accommodation.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer CTA Section -->
+<div class="text-center bg-primary text-white py-5">
+    <h2>Ready to find your perfect home?</h2>
+    <p class="mb-4">Join thousands of users in finding their dream accommodation.</p>
+    <a href="{% url 'homepage' %}" class="btn btn-light btn-lg">Get Started</a>
+</div>
+{% endblock %}

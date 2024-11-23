@@ -1,0 +1,119 @@
+/* Full-Screen Background */
+.signup-background {
+    background: url('{% static "images/dashboard_image.jpeg" %}') no-repeat center center/cover;
+    height: 100vh;
+    background-attachment: fixed;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    overflow: auto;
+}
+
+/* Form Container - Centered with Transparent Background */
+.signup-container {
+    position: relative;
+    z-index: 2;
+    max-width: 400px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.85); /* Light opaque background */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    overflow-y: auto; /* Makes the form scrollable */
+    max-height: 90vh; /* Prevents the form from going out of the viewport */
+}
+
+/* Form Heading */
+.signup-container h2 {
+    font-family: 'Poppins', sans-serif;
+    color: #004d99;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+/* Make the form scrollable */
+@media (max-width: 576px) {
+    .signup-container {
+        padding: 25px;
+        max-height: 100%; /* Ensures form can be fully scrolled */
+    }
+
+    .signup-container h2 {
+        font-size: 28px;
+    }
+
+    .signup-container .btn {
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+
+/* Custom style for checkboxes */
+.signup-container {
+    margin-bottom: 10px;
+}
+
+.signup-container {
+    font-size: 16px;
+    color: #555;
+}
+
+.signup-container {
+    margin-right: 10px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.form-check-label {
+    font-size: 16px;
+    color: #333;
+}
+
+.interests-container {
+    max-width: 400px; /* Limit width for better aesthetics */
+}
+
+h3 {
+    font-size: 20px;
+    color: #0056b3; /* Adjust heading color */
+}
+
+/* Make profile picture upload more interactive */
+.profile-pic-container {
+    position: relative;
+}
+
+.profile-pic-container input[type="file"] {
+    display: none;
+}
+
+.profile-pic-container label {
+    cursor: pointer;
+    background: #007bff;
+    padding: 5px 10px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    color: white;
+}
+
+.profile-pic-container img {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}

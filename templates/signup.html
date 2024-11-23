@@ -1,0 +1,461 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+<div class="signup-background d-flex justify-content-center align-items-center" style="background: url('{% static "images/dashboard_image.jpeg" %}') no-repeat center center/cover; height: 100vh;">
+    <div class="signup-container p-5 rounded-lg shadow-lg bg-white opacity-90" style="max-width: 700px; width: 100%; margin: 0 auto;">
+        
+        <!-- Sign-up Form -->
+        <form method="POST" enctype="multipart/form-data" id="signup-form" onsubmit="return validateForm()">
+            {% csrf_token %}
+
+            <div class="text-center mb-4">
+                <div class="form-group mb-3">                
+                    <!-- Display the default profile picture -->
+                    <div class="profile-pic-container position-relative">
+                        <img 
+                            src="{% static 'images/default_profile_picture.jpg' %}" 
+                            alt="Profile Picture" 
+                            id="profile-pic-preview" 
+                            class="rounded-circle" 
+                            style="width: 150px; height: 150px; object-fit: cover; border: 2px solid #ddd; cursor: pointer;" 
+                            onclick="document.getElementById('id_profile_picture').click();">
+                        
+                        <!-- Hidden file input -->
+                        <input 
+                            type="file" 
+                            id="id_profile_picture" 
+                            name="profile_picture" 
+                            class="d-none" 
+                            onchange="previewProfilePicture(event)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- First Name -->
+            <div class="form-group mb-3">
+                <label for="id_first_name" class="form-label">First Name</label>
+                {{ form.first_name }}
+            </div>
+            
+            <!-- Last Name -->
+            <div class="form-group mb-3">
+                <label for="id_last_name" class="form-label">Last Name</label>
+                {{ form.last_name }}
+            </div>
+
+            <!-- Email Address -->
+            <div class="form-group mb-3">
+                <label for="id_email_address" class="form-label">Email Address</label>
+                {{ form.email_address }}
+                <div id="email-error" class="text-danger" style="display:none;"></div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group mb-3">
+                <label for="id_password" class="form-label">Password</label>
+                <input type="password" id="id_password" name="password" class="form-control" placeholder="Enter your password" required>
+                <span id="toggle-password" class="password-toggle-icon" onclick="togglePasswordVisibility('id_password')">
+                    <i class="fas fa-eye"></i> <!-- Eye Icon for visibility -->
+                </span>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="form-group mb-3">
+                <label for="id_confirm_password" class="form-label">Confirm Password</label>
+                <input type="password" id="id_confirm_password" name="confirm_password" class="form-control" placeholder="Confirm your password" required>
+                <span id="toggle-confirm-password" class="password-toggle-icon" onclick="togglePasswordVisibility('id_confirm_password')">
+                    <i class="fas fa-eye"></i> <!-- Eye Icon for visibility -->
+                </span>
+            </div>
+
+            <!-- Password Mismatch Error -->
+            <small id="password-error" class="text-danger d-none">Passwords do not match</small>
+            <!-- Date of Birth -->
+            <div class="form-group mb-3">
+                <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+                {{ form.date_of_birth }}
+                <small id="dob-error" class="text-danger d-none">Date of birth is required</small>
+            </div>
+
+            <!-- Gender -->
+            <div class="form-group mb-3">
+                <label class="form-label" for="id_gender">Gender</label>
+                <select id="id_gender" name="gender" class="form-control">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <small id="gender-error" class="text-danger d-none">Gender is required</small>
+            </div>
+
+            <!-- Country Code and Phone Number -->
+            <div class="form-group row mb-3">
+                <div class="col-md-3">
+                    <label for="country-code" class="form-label">Code</label>
+                    <select id="country-code" name="country_code" class="form-control">
+                        <option value="">Select Country Code</option>
+                        {% for country in country_codes %}
+                            <option value="{{ country.country_dial_code }}">{{ country.country_name }} ({{ country.country_dial_code }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-9">
+                    <label for="id_phone_number" class="form-label">Phone Number</label>
+                    <input type="text" id="id_phone_number" name="phone_number" class="form-control" placeholder="Enter phone number">
+                    <div id="phone-error" class="text-danger" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Address: Country, State, City -->
+            <div class="form-group mb-3">
+                <label for="country" class="form-label">Country</label>
+                <select id="country" name="country" class="form-control" onchange="fetchStates(this.value)">
+                    <option value="">Select Country</option>
+                    {% for country in countries %}
+                        <option value="{{ country.country_id }}">{{ country.country_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="state" class="form-label">State</label>
+                <select id="state" name="state" class="form-control" onchange="fetchCities(this.value)">
+                    <option value="">Select State</option>
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="city" class="form-label">City</label>
+                <select id="city" name="city" class="form-control">
+                    <option value="">Select City</option>
+                </select>
+            </div>
+
+            <!-- Select Interests -->
+            <div class="form-group mb-3">
+                <h5 class="mb-3">Select Your Interests</h5>
+                <div class="interests-container">
+                    {% for interest in interests %}
+                        <div class="form-check d-flex align-items-center mb-2">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                name="interests" 
+                                value="{{ interest.id }}" 
+                                id="interest_{{ interest.id }}">
+                            <label class="form-check-label ml-2" for="interest_{{ interest.id }}">
+                                {{ interest.name }}
+                            </label>
+                        </div>
+                    {% empty %}
+                        <p>No interests available at the moment.</p>
+                    {% endfor %}
+                    <small id="interests-error" class="text-danger d-none">At least one interest must be selected</small>
+                </div>
+            </div>
+
+            <!-- Passport Upload -->
+            <div class="form-group mb-3">
+                <label for="id_passport" class="form-label">Passport</label>
+                <input 
+                    type="file" 
+                    id="id_passport" 
+                    name="passport" 
+                    class="form-control">
+                <small id="passport-error" class="text-danger d-none">Passport is required</small>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group text-center mb-4">
+                <button type="submit" class="btn btn-primary btn-lg w-100">Sign Up</button>
+            </div>
+        </form>
+
+        <!-- Sign-Up/Log In Link -->
+        <div class="text-center mt-3">
+            <p class="mb-0">Already have an account?</p>
+            <a href="{% url 'signup' %}" class="text-primary">Log In</a>
+        </div>
+    </div>
+</div>
+
+<!-- OTP Modal (Pop-up) -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otpModalLabel">Enter OTP</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>OTPs have been sent to your email and phone number. Please check and enter them below.</p>
+                
+                <!-- Email OTP -->
+                <div class="form-group mb-3">
+                    <label for="email-otp">Enter OTP sent to your Email</label>
+                    <input type="text" id="email-otp" class="form-control" placeholder="Enter Email OTP">
+                </div>
+
+                <!-- Phone OTP -->
+                <div class="form-group mb-3">
+                    <label for="phone-otp">Enter OTP sent to your Phone</label>
+                    <input type="text" id="phone-otp" class="form-control" placeholder="Enter Phone OTP">
+                </div>
+                
+                <!-- OTP Verification Button -->
+                <button class="btn btn-success" onclick="verifyOtp()">Verify OTP</button>
+                
+                <!-- OTP Error -->
+                <div id="otp-error" class="text-danger" style="display:none;">Invalid OTP, please try again.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to toggle password visibility
+    function togglePasswordVisibility(inputId) {
+        const passwordField = document.getElementById(inputId);
+        const icon = document.getElementById('toggle-' + inputId).getElementsByTagName('i')[0];
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash"); // Change icon to 'eye-slash' for visibility
+        } else {
+            passwordField.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye"); // Change icon back to 'eye' for hiding password
+        }
+    }
+    // Function to handle form submission and display OTP modal
+    document.getElementById('signup-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+        const password = document.getElementById('id_password').value;
+        const confirmPassword = document.getElementById('id_confirm_password').value;
+    
+        if (password !== confirmPassword) {
+            document.getElementById('password-error').classList.remove('d-none');
+            event.preventDefault(); // Prevent form submission if passwords do not match
+        } else {
+            const email = document.getElementById('id_email_address').value;
+            const phoneNumber = document.getElementById('id_phone_number').value;
+            document.getElementById('password-error').classList.add('d-none');
+            // Make an AJAX request to send OTPs
+            fetch('/dashboard/otpVerification/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
+                },
+                body: JSON.stringify({
+                    'email_address': email,
+                    'phone_number': phoneNumber
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Show the OTP modal
+                    var otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+                    otpModal.show(); // Display modal
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    });
+    // Function to verify OTP
+    function verifyOtp() {
+        const emailOtp = document.getElementById('email-otp').value;
+        const phoneOtp = document.getElementById('phone-otp').value;
+
+        // Compare the OTPs with those stored in session (sent via backend)
+        fetch('/dashboard/verify_otp/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
+            },
+            body: JSON.stringify({
+                'email_otp': emailOtp,
+                'phone_otp': phoneOtp
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                submitForm();
+            } else {
+                document.getElementById('otp-error').style.display = 'block';
+            }
+        });
+    }
+    // Function to submit form data
+    function submitForm() {
+        const formData = new FormData(document.getElementById('signup-form'));
+
+        fetch('/dashboard/signup/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Registration successful!');
+                window.location.href = '/success_page/'; // Redirect after successful registration
+            } else {
+                alert('Error during registration: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    // Function to check if email or phone number already exists
+    function checkEmailOrPhone() {
+        const email = document.getElementById('id_email_address').value;
+        const phone_number = document.getElementById('id_phone_number').value;
+
+        // Make an AJAX request to check email or phone number
+        fetch(`/dashboard/check_email_or_phone/?email=${email}&phone_number=${phone_number}`)
+            .then(response => response.json())
+            .then(data => {
+                // Reset error messages
+                const emailErrorDiv = document.getElementById('email-error');
+                const phoneErrorDiv = document.getElementById('phone-error');
+                
+                // Reset error messages before checking new input
+                emailErrorDiv.style.display = 'none';
+                phoneErrorDiv.style.display = 'none';
+                
+                // Display email error if exists
+                if (data.exists && data.message.includes("email")) {
+                    emailErrorDiv.textContent = data.message;
+                    emailErrorDiv.style.display = 'block';
+                    document.getElementById('signup-form').querySelector('button[type="submit"]').disabled = true; // Disable submit button
+                } 
+
+                // Display phone error if exists
+                else if (data.exists && data.message.includes("phone")) {
+                    phoneErrorDiv.textContent = data.message;
+                    phoneErrorDiv.style.display = 'block';
+                    document.getElementById('signup-form').querySelector('button[type="submit"]').disabled = true; // Disable submit button
+                } 
+                
+                // If no errors, enable submit button
+                else {
+                    document.getElementById('signup-form').querySelector('button[type="submit"]').disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error checking email or phone:', error);
+            });
+    }
+
+    // Event listeners for email and phone number input fields
+    document.getElementById('id_email_address').addEventListener('input', checkEmailOrPhone);
+    document.getElementById('id_phone_number').addEventListener('input', checkEmailOrPhone);
+    function previewProfilePicture(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            const preview = document.getElementById('profile-pic-preview');
+            preview.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function validateForm() {
+        let isValid = true;
+        
+        // Validate Date of Birth
+        const dob = document.getElementById('id_date_of_birth').value;
+        if (!dob) {
+            document.getElementById('dob-error').classList.remove('d-none');
+            isValid = false;
+        } else {
+            document.getElementById('dob-error').classList.add('d-none');
+        }
+
+        // Validate Gender
+        const gender = document.getElementById('id_gender').value;
+        if (!gender) {
+            document.getElementById('gender-error').classList.remove('d-none');
+            isValid = false;
+        } else {
+            document.getElementById('gender-error').classList.add('d-none');
+        }
+
+        // Validate Phone Number
+        const phoneNumber = document.getElementById('id_phone_number').value;
+        if (!phoneNumber) {
+            document.getElementById('phone-error').classList.remove('d-none');
+            isValid = false;
+        } else {
+            document.getElementById('phone-error').classList.add('d-none');
+        }
+
+        // Validate Interests
+        const interests = document.querySelectorAll('input[name="interests"]:checked');
+        if (interests.length === 0) {
+            document.getElementById('interests-error').classList.remove('d-none');
+            isValid = false;
+        } else {
+            document.getElementById('interests-error').classList.add('d-none');
+        }
+
+        // Validate Passport Upload
+        const passport = document.getElementById('id_passport').files.length;
+        if (passport === 0) {
+            document.getElementById('passport-error').classList.remove('d-none');
+            isValid = false;
+        } else {
+            document.getElementById('passport-error').classList.add('d-none');
+        }
+
+        // Validate Profile Picture
+        const profilePic = document.getElementById('id_profile_picture').files.length;
+        if (profilePic === 0) {
+            alert("Please upload a profile picture.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function fetchStates(countryId) {
+        fetch(`/dashboard/get_states/${countryId}/`)
+            .then(response => response.json())
+            .then(data => {
+                const stateSelect = document.getElementById('state');
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                data.states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.state_id;
+                    option.textContent = state.state_name;
+                    stateSelect.appendChild(option);
+                });
+            });
+    }
+
+    function fetchCities(stateId) {
+        fetch(`/dashboard/get_cities/${stateId}/`)
+            .then(response => response.json())
+            .then(data => {
+                const citySelect = document.getElementById('city');
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                data.cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.name;
+                    citySelect.appendChild(option);
+                });
+            });
+    }
+</script>
+
+{% endblock %}

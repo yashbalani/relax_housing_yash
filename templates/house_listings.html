@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}House Listings{% endblock %}
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Background Image -->
+    <div class="hero-section d-flex justify-content-center align-items-center" style="background: url('{% static "images/dashboard_image.jpeg" %}') no-repeat center center/cover; height: 100vh;">
+        <div class="overlay w-100 h-100 d-flex justify-content-center align-items-center">
+            <div class="text-center text-white">
+                <h1 class="display-4">Find Your Dream Home</h1>
+                <p class="lead">Discover the best places to live across the city</p>
+                
+                <!-- City Dropdown -->
+                <div class="dropdown-container mb-5">
+                    <label for="city-dropdown" class="h5">Select a City</label>
+                    <select id="city-dropdown" class="form-select form-select-lg mt-2">
+                        <option value="">Choose a City</option>
+                        <option value="New York">New York</option>
+                        <option value="Los Angeles">Los Angeles</option>
+                        <option value="San Francisco">San Francisco</option>
+                        <option value="Chicago">Chicago</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accommodation List -->
+    <div id="accommodation-list" class="container my-5">
+        <div class="row">
+            <!-- Accommodation Cards (Static Data for now) -->
+            <div class="col-md-6 mb-4 accommodation-item" data-city="New York">
+                <div class="card accommodation-card">
+                    <div class="row no-gutters">
+                        <!-- Image Section -->
+                        <div class="col-md-4">
+                            <img src="{% static 'images/house1.jpg' %}" class="card-img" alt="House 1">
+                        </div>
+                        <!-- Text Section -->
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Luxury Apartment</h5>
+                                <p class="card-text"><strong>Size:</strong> 1200 sqft</p>
+                                <p class="card-text"><strong>Location:</strong> Downtown, New York</p>
+                                <p class="card-text"><strong>City:</strong> New York</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4 accommodation-item" data-city="Los Angeles">
+                <div class="card accommodation-card">
+                    <div class="row no-gutters">
+                        <!-- Image Section -->
+                        <div class="col-md-4">
+                            <img src="{% static 'images/house2.jpg' %}" class="card-img" alt="House 2">
+                        </div>
+                        <!-- Text Section -->
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Modern Condo</h5>
+                                <p class="card-text"><strong>Size:</strong> 950 sqft</p>
+                                <p class="card-text"><strong>Location:</strong> Santa Monica, Los Angeles</p>
+                                <p class="card-text"><strong>City:</strong> Los Angeles</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4 accommodation-item" data-city="San Francisco">
+                <div class="card accommodation-card">
+                    <div class="row no-gutters">
+                        <!-- Image Section -->
+                        <div class="col-md-4">
+                            <img src="{% static 'images/house3.jpg' %}" class="card-img" alt="House 3">
+                        </div>
+                        <!-- Text Section -->
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Spacious Studio</h5>
+                                <p class="card-text"><strong>Size:</strong> 700 sqft</p>
+                                <p class="card-text"><strong>Location:</strong> Mission District, San Francisco</p>
+                                <p class="card-text"><strong>City:</strong> San Francisco</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4 accommodation-item" data-city="Chicago">
+                <div class="card accommodation-card">
+                    <div class="row no-gutters">
+                        <!-- Image Section -->
+                        <div class="col-md-4">
+                            <img src="{% static 'images/house4.jpg' %}" class="card-img" alt="House 4">
+                        </div>
+                        <!-- Text Section -->
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Cozy Apartment</h5>
+                                <p class="card-text"><strong>Size:</strong> 850 sqft</p>
+                                <p class="card-text"><strong>Location:</strong> Lincoln Park, Chicago</p>
+                                <p class="card-text"><strong>City:</strong> Chicago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+<!-- Custom Styles -->
+<style>
+    .hero-section {
+        position: relative;
+        color: white;
+    }
+
+    .overlay {
+        background: rgba(0, 0, 0, 0.5);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .dropdown-container {
+        max-width: 400px;
+        margin: 0 auto;
+        background-color: rgba(255, 255, 255, 0.7);
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .form-select {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        height: 50px;
+    }
+
+    .accommodation-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .accommodation-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px 0 0 8px;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .card-text {
+        font-size: 1rem;
+        color: #555;
+    }
+
+    .row.no-gutters {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .accommodation-card {
+            flex-direction: column;
+        }
+
+        .card-img {
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 15px;
+        }
+
+        .dropdown-container {
+            max-width: 300px;
+        }
+    }
+</style>
+
+<!-- Script to handle City Dropdown and Filter Accommodation -->
+<script>
+    document.getElementById("city-dropdown").addEventListener("change", function() {
+        var selectedCity = this.value;
+        var accommodationItems = document.querySelectorAll(".accommodation-item");
+
+        accommodationItems.forEach(function(item) {
+            var itemCity = item.getAttribute("data-city");
+
+            if (selectedCity === "" || itemCity === selectedCity) {
+                item.style.display = "block"; // Show item
+            } else {
+                item.style.display = "none"; // Hide item
+            }
+        });
+    });
+</script>

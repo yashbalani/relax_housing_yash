@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<script src="{% static 'js/script.js' %}"></script>
+
+{% if messages %}
+    <div class="alert alert-danger" role="alert">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% block content %}
+    <h2>Accommodation Form</h2>
+    <style>
+        .profile-thumbnail {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            display: none; /* Hide the image initially */
+        }
+        
+    </style>
+    <form method="POST" enctype="multipart/form-data" action="{% url 'accommodation_form' %}">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="profile_photo" class="form-label">Profile Photo</label>
+            <input type="file" id="profile_photo" name="profile_photo" class="form-control" required accept="image/*">
+            <div class="mt-2">
+                <img id="profile_photo_thumbnail" src="" alt="Profile Photo" class="profile-thumbnail">
+            </div>
+        </div>
+        
+        <!-- Personal Details -->
+        <div class="mb-3">
+            <label for="first_name" class="form-label">First Name</label>
+            <input type="text" id="first_name" name="first_name" class="form-control" required value="{{ form.first_name.value }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="last_name" class="form-label">Last Name</label>
+            <input type="text" id="last_name" name="last_name" class="form-control" required value="{{ form.last_name.value }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" id="email" name="email_address" class="form-control" required value="{{ form.email_address.value }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="date_of_birth" class="form-label">Date of Birth</label>
+            <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" required value="{{ form.date_of_birth.value }}">
+        </div>
+
+        <!-- Accommodation Details -->
+        <div class="mb-3">
+            <label for="start_date" class="form-label">Start Date</label>
+            <input type="date" id="start_date" name="start_date" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="gender" class="form-label">Gender</label>
+            <select id="gender" name="gender" class="form-control" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+
+        <!-- Location of Origin -->
+        <h4>Country of Origin</h4>
+        <div class="mb-3">
+            <label for="country_origin" class="form-label">Country</label>
+            <select id="country_origin" name="country_origin" class="form-control" required>
+                <option value="">Select Country</option>
+                {% for country in countries %}
+                    <option value="{{ country.country_id }}">{{ country.country_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="state_origin" class="form-label">State</label>
+            <select id="state_origin" name="state_origin" class="form-control" required>
+                <option value="">Select State</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="city_origin" class="form-label">City</label>
+            <select id="city_origin" name="city_origin" class="form-control" required>
+                <option value="">Select City</option>
+            </select>
+        </div>
+
+        <!-- Location of Accommodation -->
+        <h4>Accommodation Location</h4>
+        <div class="mb-3">
+            <label for="country_accommodation" class="form-label">Country</label>
+            <select id="country_accommodation" class="form-control" required>
+                <option value="">Select Country</option>
+                {% for country in countries %}
+                    <option value="{{ country.country_id }}">{{ country.country_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="state_accommodation" class="form-label">State</label>
+            <select id="state_accommodation" class="form-control" required>
+                <option value="">Select State</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="city_accommodation" class="form-label">City</label>
+            <select id="city_accommodation" name="city_accommodation" class="form-control" required>
+                <option value="">Select City</option>
+            </select>
+        </div>
+
+        <!-- Preferences and Additional Details -->
+        <div class="mb-3">
+            <label for="preference_key" class="form-label">Room Preference</label>
+            <select id="preference_key" name="room_preference" class="form-control" required>
+                {% for preference in room_preferences %}
+                    <option value="{{ preference.id }}">{{ preference.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Additional Preferences based on Room Type -->
+        <div class="mb-3">
+            <label for="additional_preference" class="form-label">Additional Preference</label>
+            <select id="additional_preference" name="additional_preference" class="form-control" required>
+                {% for preference in additional_preferences %}
+                    <option value="{{ preference.id }}">{{ preference.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="purpose_of_stay" class="form-label">Purpose Of Stay</label>
+            <select id="purpose_of_stay" name="purpose_of_stay" class="form-control" required>
+                {% for stay in purpose_of_stay %}
+                    <option value="{{ stay.id }}">{{ stay.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="min_length_of_stay" class="form-label">Min length of stay</label>
+            <select id="min_length_of_stay" name="min_length_of_stay" class="form-control" required>
+                {% for length in min_length_of_stay %}
+                    <option value="{{ length.id }}">{{ length.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Budget Range -->
+        <div class="mb-3">
+            <label for="min_budget" class="form-label">Minimum Monthly Rent</label>
+            <input type="number" id="min_budget" name="min_budget" class="form-control" required placeholder="Enter minimum monthly rent">
+        </div>
+        
+        <div class="mb-3">
+            <label for="max_budget" class="form-label">Maximum Monthly Rent</label>
+            <input type="number" id="max_budget" name="max_budget" class="form-control" required placeholder="Enter maximum monthly rent">
+        </div>
+
+        <div class="mb-3">
+            <label for="lifestyle" class="form-label">Lifestyle Preferences</label>
+            <select id="lifestyle" name="lifestyle" class="form-control" required>
+                {% for preference in lifestyle_preferences %}
+                    <option value="{{ preference.id }}">{{ preference.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Hobbies and Interests with Multi-Select -->
+        <div class="mb-3">
+            <label for="interests" class="form-label">Hobbies and Interests</label>
+            <select id="interests" name="interests" class="form-control" required multiple>
+                {% for interest in interests %}
+                    <option value="{{ interest.id }}">{{ interest.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="passport" class="form-label">Upload Passport</label>
+            <input type="file" id="passport" name="passport" class="form-control" required accept="application/pdf,image/*">
+        </div>
+        {{ user_form.as_p }}
+        {{ accommodation_form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById("profile_photo").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+        
+            if (file) {
+                reader.onload = function(e) {
+                    // Display the selected image as a thumbnail
+                    const imageElement = document.getElementById("profile_photo_thumbnail");
+                    imageElement.src = e.target.result;
+                    imageElement.style.display = "block"; // Show the thumbnail image
+                };
+        
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        document.getElementById("passport").addEventListener("change", function(event) {
+            const fileName = event.target.files[0]?.name;
+            if (fileName) {
+                alert("Selected file: " + fileName);
+            }
+        });
+        const countrySelectOrigin = document.getElementById("country_origin");
+        const stateSelectOrigin = document.getElementById("state_origin");
+        const citySelectOrigin = document.getElementById("city_origin");
+
+        const countrySelectAccommodation = document.getElementById("country_accommodation");
+        const stateSelectAccommodation = document.getElementById("state_accommodation");
+        const citySelectAccommodation = document.getElementById("city_accommodation");
+
+        // Update states and cities based on selected country for Origin
+        countrySelectOrigin.addEventListener("change", function() {
+            const countryId = countrySelectOrigin.value;
+            
+            if (countryId) {
+                fetch(`/dashboard/get_states/${countryId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        stateSelectOrigin.innerHTML = '<option value="">Select State</option>';
+                        data.states.forEach(state => {
+                            stateSelectOrigin.innerHTML += `<option value="${state.state_id}">${state.state_name}</option>`;
+                        });
+                        citySelectOrigin.innerHTML = '<option value="">Select City</option>'; // Reset city dropdown
+                    });
+            }
+        });
+
+        stateSelectOrigin.addEventListener("change", function() {
+            const stateId = stateSelectOrigin.value;
+
+            if (stateId) {
+                fetch(`/dashboard/get_cities/${stateId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        citySelectOrigin.innerHTML = '<option value="">Select City</option>';
+                        data.cities.forEach(city => {
+                            citySelectOrigin.innerHTML += `<option value="${city.id}">${city.name}</option>`;
+                        });
+                    });
+            }
+        });
+
+        // Update states and cities based on selected country for Accommodation
+        countrySelectAccommodation.addEventListener("change", function() {
+            const countryId = countrySelectAccommodation.value;
+            
+            if (countryId) {
+                fetch(`/dashboard/get_states/${countryId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        stateSelectAccommodation.innerHTML = '<option value="">Select State</option>';
+                        data.states.forEach(state => {
+                            stateSelectAccommodation.innerHTML += `<option value="${state.state_id}">${state.state_name}</option>`;
+                        });
+                        citySelectAccommodation.innerHTML = '<option value="">Select City</option>'; // Reset city dropdown
+                    });
+            }
+        });
+
+        stateSelectAccommodation.addEventListener("change", function() {
+            const stateId = stateSelectAccommodation.value;
+
+            if (stateId) {
+                fetch(`/dashboard/get_cities/${stateId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        citySelectAccommodation.innerHTML = '<option value="">Select City</option>';
+                        data.cities.forEach(city => {
+                            citySelectAccommodation.innerHTML += `<option value="${city.id}">${city.name}</option>`;
+                        });
+                    });
+            }
+        });
+        const preferenceKey = document.getElementById("preference_key");
+        const additionalPreferencesContainer = document.getElementById("additional_preferences");
+        const additionalPreferenceSelect = document.getElementById("additional_preference");
+
+        // Function to show additional preferences based on room type selection
+        preferenceKey.addEventListener("change", function() {
+            const selectedPreference = preferenceKey.value;
+            additionalPreferencesContainer.style.display = "none"; // Hide by default
+
+            // Clear existing options
+            additionalPreferenceSelect.innerHTML = "";
+
+            if (selectedPreference === "private_room_shared_apartment") {
+                // Add options for private room preference
+                additionalPreferencesContainer.style.display = "block";
+                additionalPreferenceSelect.innerHTML += `<option value="opposite_gender_ok">Are you fine having an opposite gender person in your apartment?</option>`;
+                additionalPreferenceSelect.innerHTML += `<option value="same_gender_only">I want my gender people only in the apartment</option>`;
+            } else if (selectedPreference === "shared_room") {
+                // Add options for shared room preference
+                additionalPreferencesContainer.style.display = "block";
+                additionalPreferenceSelect.innerHTML += `<option value="same_gender_roommates">Want same gender roommates?</option>`;
+                additionalPreferenceSelect.innerHTML += `<option value="different_gender_roommates">Different gender roommates are also fine</option>`;
+            }
+        });
+
+        // Trigger the change event on page load to set the initial state
+        preferenceKey.dispatchEvent(new Event("change"));
+    </script>
+{% endblock %}
